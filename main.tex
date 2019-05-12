@@ -205,9 +205,23 @@ Muons_pt[(nMuons > 0), 0] > 30          # mask first dim, pick 0
 \uncover<3->{\textcolor{darkblue}{The runtime error would be safer and more informative as a type error.}}
 \end{frame}
 
+\begin{frame}{}
+\Large
+\vspace{1.25 cm}
+\begin{center}
+Minimally, I think it could be useful to include \\ intervals of possible lengths in an array's type description.
 
-
-
-
+\large
+\vspace{0.5 cm}
+\begin{minipage}{0.85\linewidth}
+\begin{itemize}
+\item Some languages (e.g.\ Numba) already include an array's dimension in its type.
+\item Some functions, like integer {\tt min}/{\tt max} or {\tt argmin}/{\tt argmax}, don't have a good runtime solution for empty arrays.
+\item Some arrays, such as those coming from a group-by operations, can be guaranteed non-empty.
+\item Functional operations, like {\tt map}, {\tt filter}, and {\tt joins}, transform array lengths in semi-predictable ways.
+\end{itemize}
+\end{minipage}
+\end{center}
+\end{frame}
 
 \end{document}
