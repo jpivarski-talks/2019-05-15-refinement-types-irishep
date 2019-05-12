@@ -56,170 +56,206 @@
 
 % START START START START START START START START START START START START START
 
-\begin{frame}{}
-\large
-\vspace{1.25 cm}
-Quite a few groups have been thinking about physics event processing languages, explicitly or implicitly.
+%% \begin{frame}{}
+%% \large
+%% \vspace{1.25 cm}
+%% Quite a few groups have been thinking about physics event processing languages, explicitly or implicitly.
 
-\vspace{0.25 cm}
-\begin{itemize}
-\item \textcolor{darkblue}{LHADA/ADL:} Sezen Sekmen, Harry Prosper, Philippe Gras
-\item \textcolor{darkblue}{CutLang:} Gokhan Unel
-\item \textcolor{darkblue}{IRIS-HEP Analysis Systems:} Gordon Watts, Mason Proffitt, Emma Torro
-\item \textcolor{darkblue}{FAST-Carpenter (YAML):} Benjamin Krikler
-\item \textcolor{darkblue}{NAIL:} Andrea Rizzi
-\item \textcolor{darkblue}{RDataFrame:} Enrico Guiraud, Danilo Piparo, and the ROOT Team
-\item \textcolor{darkblue}{AEACuS \& RHADAManTHUS:} Joel Walker (phenomenology)
-\item \textcolor{darkblue}{Femtocode:} me, though not for several years\ldots
-\end{itemize}
+%% \vspace{0.25 cm}
+%% \begin{itemize}
+%% \item \textcolor{darkblue}{LHADA/ADL:} Sezen Sekmen, Harry Prosper, Philippe Gras
+%% \item \textcolor{darkblue}{CutLang:} Gokhan Unel
+%% \item \textcolor{darkblue}{IRIS-HEP Analysis Systems:} Gordon Watts, Mason Proffitt, Emma Torro
+%% \item \textcolor{darkblue}{FAST-Carpenter (YAML):} Benjamin Krikler
+%% \item \textcolor{darkblue}{NAIL:} Andrea Rizzi
+%% \item \textcolor{darkblue}{RDataFrame:} Enrico Guiraud, Danilo Piparo, and the ROOT Team
+%% \item \textcolor{darkblue}{AEACuS \& RHADAManTHUS:} Joel Walker (phenomenology)
+%% \item \textcolor{darkblue}{Femtocode:} me, though not for several years\ldots
+%% \end{itemize}
 
-\vspace{0.25 cm}
-\small \hfill See \textcolor{blue}{\href{https://indico.cern.ch/event/769263/timetable/}{Analysis Description Languages Workshop}} (last week).
-\end{frame}
+%% \vspace{0.25 cm}
+%% \small \hfill See \textcolor{blue}{\href{https://indico.cern.ch/event/769263/timetable/}{Analysis Description Languages Workshop}} (last week).
+%% \end{frame}
 
-\begin{frame}{}
+%% \begin{frame}{}
+%% \Large
+%% \vspace{1.25 cm}
+%% \begin{center}
+%% Originally, I was going to talk about refinement types \\ (a core feature of Femtocode), but this talk has grown.
+%% \end{center}
+%% \end{frame}
+
+%% \begin{frame}{}
+%% \vspace{1.25 cm}
+%% \includegraphics[width=\linewidth]{refinement-wikipedia.png}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Example in practice: \only<1-2>{prevent NaN at compile-time}\only<3-4>{identify impossible situations}}
+%% \begin{columns}
+%% \column{1.1\linewidth}
+%% \begin{center}
+%% \only<1>{\fbox{\mintinline{python}{x / y}}}\only<2>{\fbox{\mintinline{python}{if y != 0: x / y else: None}}}\only<3>{\fbox{\mintinline{python}{x == 5 and y == 6 and x == y}}}\only<4>{\fbox{\mintinline{python}{x == y and x == 5 and y == 6}}}
+%% \end{center}
+
+%% \begin{onlyenv}<1>
+%% \begin{verbatim}
+%% femtocode.parser.FemtocodeError: Function "/" does not accept
+%% arguments with the given types:
+
+%%     /(real,
+%%       real)
+
+%%     Indeterminate form (0 / 0) is possible; constrain with if-else.
+
+%% Check line:col 1:0 (pos 0):
+
+%%     x / y
+%% ----^
+%% \end{verbatim}
+%% \end{onlyenv}
+%% \begin{onlyenv}<2>
+%% \begin{verbatim}
+%% ----> union(null, real)
+
+
+
+
+
+
+
+
+
+
+
+%% \end{verbatim}
+%% \end{onlyenv}
+%% \begin{onlyenv}<3>
+%% \begin{verbatim}
+%% femtocode.parser.FemtocodeError: Function "==" does not accept
+%% arguments with the given types:
+
+%%     ==(integer(min=5, max=5),
+%%        integer(min=6, max=6))
+
+%%     The argument types have no overlap (values can never be equal).
+
+%% Check line:col 1:27 (pos 27):
+
+%%     x == 5 and y == 6 and x == y
+%% -------------------------------^
+%% \end{verbatim}
+%% \end{onlyenv}
+%% \begin{onlyenv}<4>
+%% \begin{verbatim}
+%% femtocode.parser.FemtocodeError: Function "==" does not accept
+%% arguments with the given types:
+
+%%     ==(integer(min=5, max=5),
+%%        integer(min=6, max=6))
+
+%%     The argument types have no overlap (values can never be equal).
+
+%% Check line:col 1:5 (pos 5):
+
+%%     x == y and x == 5 and y == 6
+%% ---------^
+%% \end{verbatim}
+%% \end{onlyenv}
+%% \end{columns}
+%% \end{frame}
+
+%% \begin{frame}{It's possible to turn {\it all} runtime errors into compile errors}
+%% \large
+%% \vspace{0.4 cm}
+%% \includegraphics[width=0.98\linewidth]{totalfunctional-wikipedia.png}
+
+%% \vspace{0.25 cm}
+%% Including value sets in the type definitions lets us identify runtime conditions in the type-check.
+
+%% \vspace{0.25 cm}
+%% The hard parts are recursion (structural recursion) and infinite datasets (codata), both of which we can safely exclude from physics event processing.
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Even without {\it total} functions, it can be useful for array lengths}
+%% \large
+%% \vspace{0.5 cm}
+
+%% Awkward-Array users sometimes make this mistake:
+
+%% \small\begin{minted}{python}
+%% (nMuons > 0) & (Muons_pt[:, 0] > 30)    # intersection of masks
+%% \end{minted}
+%% \large
+
+%% \vspace{0.25 cm}
+%% The first mask requires events with at least one muon and the second requires the first muon to have 30~GeV, {\it but the selections are independent.}
+
+%% \vspace{0.5 cm}
+%% \begin{uncoverenv}<2->
+%% The second fails because some events have no muons. The right way to do it is with a single selection:
+
+%% \small\begin{minted}{python}
+%% Muons_pt[(nMuons > 0), 0] > 30          # mask first dim, pick 0
+%% \end{minted}
+%% \end{uncoverenv}
+
+%% \large
+
+%% \vspace{0.25 cm}
+%% \uncover<3->{\textcolor{darkblue}{The runtime error would be safer and more informative as a type error.}}
+%% \end{frame}
+
+%% \begin{frame}{}
+%% \Large
+%% \vspace{1.25 cm}
+%% \begin{center}
+%% Minimally, I think it could be useful to include \\ intervals of possible lengths in an array's type description.
+
+%% \large
+%% \vspace{0.5 cm}
+%% \begin{minipage}{0.85\linewidth}
+%% \begin{itemize}
+%% \item Some languages (e.g.\ Numba) already include an array's dimension in its type.
+%% \item Some functions, like integer {\tt min}/{\tt max} or {\tt argmin}/{\tt argmax}, don't have a good runtime solution for empty arrays.
+%% \item Some arrays, such as those coming from a group-by operations, can be guaranteed non-empty.
+%% \item Functional operations, like {\tt map}, {\tt filter}, and {\tt joins}, transform array lengths in semi-predictable ways.
+%% \end{itemize}
+%% \end{minipage}
+%% \end{center}
+%% \end{frame}
+
+\begin{frame}[fragile]{Other weird language features}
 \Large
-\vspace{1.25 cm}
-\begin{center}
-Originally, I was going to talk about refinement types \\ (a core feature of Femtocode), but this talk has grown.
-\end{center}
-\end{frame}
-
-\begin{frame}{}
-\vspace{1.25 cm}
-\includegraphics[width=\linewidth]{refinement-wikipedia.png}
-\end{frame}
-
-\begin{frame}[fragile]{Example in practice: \only<1-2>{prevent NaN at compile-time}\only<3-4>{identify impossible situations}}
-\begin{columns}
-\column{1.1\linewidth}
-\begin{center}
-\only<1>{\fbox{\mintinline{python}{x / y}}}\only<2>{\fbox{\mintinline{python}{if y != 0: x / y else: None}}}\only<3>{\fbox{\mintinline{python}{x == 5 and y == 6 and x == y}}}\only<4>{\fbox{\mintinline{python}{x == y and x == 5 and y == 6}}}
-\end{center}
-
-\begin{onlyenv}<1>
-\begin{verbatim}
-femtocode.parser.FemtocodeError: Function "/" does not accept
-arguments with the given types:
-
-    /(real,
-      real)
-
-    Indeterminate form (0 / 0) is possible; constrain with if-else.
-
-Check line:col 1:0 (pos 0):
-
-    x / y
-----^
-\end{verbatim}
-\end{onlyenv}
-\begin{onlyenv}<2>
-\begin{verbatim}
-----> union(null, real)
-
-
-
-
-
-
-
-
-
-
-
-\end{verbatim}
-\end{onlyenv}
-\begin{onlyenv}<3>
-\begin{verbatim}
-femtocode.parser.FemtocodeError: Function "==" does not accept
-arguments with the given types:
-
-    ==(integer(min=5, max=5),
-       integer(min=6, max=6))
-
-    The argument types have no overlap (values can never be equal).
-
-Check line:col 1:27 (pos 27):
-
-    x == 5 and y == 6 and x == y
--------------------------------^
-\end{verbatim}
-\end{onlyenv}
-\begin{onlyenv}<4>
-\begin{verbatim}
-femtocode.parser.FemtocodeError: Function "==" does not accept
-arguments with the given types:
-
-    ==(integer(min=5, max=5),
-       integer(min=6, max=6))
-
-    The argument types have no overlap (values can never be equal).
-
-Check line:col 1:5 (pos 5):
-
-    x == y and x == 5 and y == 6
----------^
-\end{verbatim}
-\end{onlyenv}
-\end{columns}
-\end{frame}
-
-\begin{frame}{It's possible to turn {\it all} runtime errors into compile errors}
-\large
-\vspace{0.4 cm}
-\includegraphics[width=0.98\linewidth]{totalfunctional-wikipedia.png}
-
-\vspace{0.25 cm}
-Including value sets in the type definitions lets us identify runtime conditions in the type-check.
-
-\vspace{0.25 cm}
-The hard parts are recursion (structural recursion) and infinite datasets (codata), both of which we can safely exclude from physics event processing.
-\end{frame}
-
-\begin{frame}[fragile]{Even without {\it total} functions, it can be useful for array lengths}
-\large
 \vspace{0.5 cm}
 
-Awkward-Array users sometimes make this mistake:
-
-\small\begin{minted}{python}
-(nMuons > 0) & (Muons_pt[:, 0] > 30)    # intersection of masks
-\end{minted}
-\large
-
-\vspace{0.25 cm}
-The first mask requires events with at least one muon and the second requires the first muon to have 30~GeV, {\it but the selections are independent.}
+\underline{Pattern matching: like regular expressions for data structures.}
 
 \vspace{0.5 cm}
-\begin{uncoverenv}<2->
-The second fails because some events have no muons. The right way to do it is with a single selection:
+\textcolor{darkorange}{\bf Scala:}
 
-\small\begin{minted}{python}
-Muons_pt[(nMuons > 0), 0] > 30          # mask first dim, pick 0
-\end{minted}
-\end{uncoverenv}
-
-\large
-
-\vspace{0.25 cm}
-\uncover<3->{\textcolor{darkblue}{The runtime error would be safer and more informative as a type error.}}
-\end{frame}
-
-\begin{frame}{}
-\Large
-\vspace{1.25 cm}
 \begin{center}
-Minimally, I think it could be useful to include \\ intervals of possible lengths in an array's type description.
-
-\large
-\vspace{0.5 cm}
 \begin{minipage}{0.85\linewidth}
-\begin{itemize}
-\item Some languages (e.g.\ Numba) already include an array's dimension in its type.
-\item Some functions, like integer {\tt min}/{\tt max} or {\tt argmin}/{\tt argmax}, don't have a good runtime solution for empty arrays.
-\item Some arrays, such as those coming from a group-by operations, can be guaranteed non-empty.
-\item Functional operations, like {\tt map}, {\tt filter}, and {\tt joins}, transform array lengths in semi-predictable ways.
-\end{itemize}
+\normalsize
+\begin{minted}{scala}
+def pz(particle: Particle) = match particle {
+    case Neutral(pt, eta, _)    => pt * sinh(eta)
+    case Charged(pt, eta, _, q) => pt * sinh(eta)
+}
+\end{minted}
+\end{minipage}
+\end{center}
+
+\vspace{0.5 cm}
+\textcolor{darkorange}{\bf Haskell:}
+
+\begin{center}
+\begin{minipage}{0.85\linewidth}
+\normalsize
+\begin{minted}{haskell}
+pz :: (Particle particle) => particle -> Float
+pz (Neutral pt eta _)   = pt * sinh(eta) 
+pz (Charged pt eta _ q) = pt * sinh(eta)
+\end{minted}
 \end{minipage}
 \end{center}
 \end{frame}
