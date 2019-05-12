@@ -176,5 +176,38 @@ Including value sets in the type definitions lets us identify runtime conditions
 The hard parts are recursion (structural recursion) and infinite datasets (codata), both of which we can safely exclude from physics event processing.
 \end{frame}
 
+\begin{frame}[fragile]{Even without {\it total} functions, it can be useful for array lengths}
+\large
+\vspace{0.5 cm}
+
+Awkward-Array users sometimes make this mistake:
+
+\small\begin{minted}{python}
+(nMuons > 0) & (Muons_pt[:, 0] > 30)    # intersection of masks
+\end{minted}
+\large
+
+\vspace{0.25 cm}
+The first mask requires events with at least one muon and the second requires the first muon to have 30~GeV, {\it but the selections are independent.}
+
+\vspace{0.5 cm}
+\begin{uncoverenv}<2->
+The second fails because some events have no muons. The right way to do it is with a single selection:
+
+\small\begin{minted}{python}
+Muons_pt[(nMuons > 0), 0] > 30          # mask first dim, pick 0
+\end{minted}
+\end{uncoverenv}
+
+\large
+
+\vspace{0.25 cm}
+\uncover<3->{\textcolor{darkblue}{The runtime error would be safer and more informative as a type error.}}
+\end{frame}
+
+
+
+
+
 
 \end{document}
