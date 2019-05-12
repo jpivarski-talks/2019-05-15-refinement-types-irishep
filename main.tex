@@ -32,10 +32,10 @@
 \definecolor{darkgreen}{rgb}{0,0.6,0}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
-\title[yyyy-mm-dd-DESCRIPTION]{TITLE}
+\title[2019-05-15-refinement-types-irishep]{Refinement types and other werid language features for physics}
 \author{Jim Pivarski}
 \institute{Princeton University -- IRIS-HEP}
-\date{MONTH DAY, YEAR}
+\date{May 15, 2019}
 
 \usetikzlibrary{shapes.callouts}
 
@@ -56,9 +56,113 @@
 
 % START START START START START START START START START START START START START
 
-\begin{frame}{First slide}
-\vspace{0.5 cm}
-HERE
+\begin{frame}{}
+\large
+\vspace{1.25 cm}
+Quite a few groups have been thinking about physics event processing languages, explicitly or implicitly.
+
+\vspace{0.25 cm}
+\begin{itemize}
+\item \textcolor{darkblue}{LHADA/ADL:} Sezen Sekmen, Harry Prosper, Philippe Gras
+\item \textcolor{darkblue}{CutLang:} Gokhan Unel
+\item \textcolor{darkblue}{IRIS-HEP Analysis Systems:} Gordon Watts, Mason Proffitt, Emma Torro
+\item \textcolor{darkblue}{FAST-Carpenter (YAML):} Benjamin Krikler
+\item \textcolor{darkblue}{NAIL:} Andrea Rizzi
+\item \textcolor{darkblue}{RDataFrame:} Enrico Guiraud, Danilo Piparo, and the ROOT Team
+\item \textcolor{darkblue}{AEACuS \& RHADAManTHUS:} Joel Walker (phenomenology)
+\item \textcolor{darkblue}{Femtocode:} me, though not for several years\ldots
+\end{itemize}
+
+\vspace{0.25 cm}
+\small \hfill See \textcolor{blue}{\href{https://indico.cern.ch/event/769263/timetable/}{Analysis Description Languages Workshop}} (last week).
 \end{frame}
+
+\begin{frame}{}
+\Large
+\vspace{1.25 cm}
+\begin{center}
+Originally, I was going to talk about refinement types \\ (a core feature of Femtocode), but this talk has grown.
+\end{center}
+\end{frame}
+
+\begin{frame}{}
+\vspace{1.25 cm}
+\includegraphics[width=\linewidth]{refinement-wikipedia.png}
+\end{frame}
+
+\begin{frame}[fragile]{Example in practice: \only<1-2>{prevent NaN at compile-time}\only<3-4>{identify impossible situations}}
+\begin{columns}
+\column{1.1\linewidth}
+\begin{center}
+\only<1>{\fbox{\mintinline{python}{x / y}}}\only<2>{\fbox{\mintinline{python}{if y != 0: x / y else: None}}}\only<3>{\fbox{\mintinline{python}{x == 5 and y == 6 and x == y}}}\only<4>{\fbox{\mintinline{python}{x == y and x == 5 and y == 6}}}
+\end{center}
+
+\begin{onlyenv}<1>
+\begin{verbatim}
+femtocode.parser.FemtocodeError: Function "/" does not accept
+arguments with the given types:
+
+    /(real,
+      real)
+
+    Indeterminate form (0 / 0) is possible; constrain with if-else.
+
+Check line:col 1:0 (pos 0):
+
+    x / y
+----^
+\end{verbatim}
+\end{onlyenv}
+\begin{onlyenv}<2>
+\begin{verbatim}
+----> union(null, real)
+
+
+
+
+
+
+
+
+
+
+
+\end{verbatim}
+\end{onlyenv}
+\begin{onlyenv}<3>
+\begin{verbatim}
+femtocode.parser.FemtocodeError: Function "==" does not accept
+arguments with the given types:
+
+    ==(integer(min=5, max=5),
+       integer(min=6, max=6))
+
+    The argument types have no overlap (values can never be equal).
+
+Check line:col 1:27 (pos 27):
+
+    x == 5 and y == 6 and x == y
+-------------------------------^
+\end{verbatim}
+\end{onlyenv}
+\begin{onlyenv}<4>
+\begin{verbatim}
+femtocode.parser.FemtocodeError: Function "==" does not accept
+arguments with the given types:
+
+    ==(integer(min=5, max=5),
+       integer(min=6, max=6))
+
+    The argument types have no overlap (values can never be equal).
+
+Check line:col 1:5 (pos 5):
+
+    x == y and x == 5 and y == 6
+---------^
+\end{verbatim}
+\end{onlyenv}
+\end{columns}
+\end{frame}
+
 
 \end{document}
