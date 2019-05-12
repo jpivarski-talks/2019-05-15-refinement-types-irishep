@@ -74,7 +74,7 @@
 %% \end{itemize}
 
 %% \vspace{0.25 cm}
-%% \small \hfill See \textcolor{blue}{\href{https://indico.cern.ch/event/769263/timetable/}{Analysis Description Languages Workshop}} (last week).
+%% \small \hfill see \textcolor{blue}{\href{https://indico.cern.ch/event/769263/timetable/}{Analysis Description Languages Workshop}} (last week)
 %% \end{frame}
 
 %% \begin{frame}{}
@@ -224,112 +224,186 @@
 %% \end{center}
 %% \end{frame}
 
-\begin{frame}[fragile]{Other weird language features}
+%% \begin{frame}[fragile]{Other weird language features}
+%% \Large
+%% \vspace{0.5 cm}
+
+%% \underline{Pattern matching}: like regular expressions for data structures.
+
+%% \vspace{0.5 cm}
+%% \textcolor{darkorange}{\bf Scala:}
+
+%% \begin{center}
+%% \begin{minipage}{0.85\linewidth}
+%% \normalsize
+%% \begin{minted}{scala}
+%% def pz(particle: Particle) = match particle {
+%%     case Neutral(pt, eta, _)    => pt * sinh(eta)
+%%     case Charged(pt, eta, _, q) => pt * sinh(eta)
+%% }
+%% \end{minted}
+%% \end{minipage}
+%% \end{center}
+
+%% \vspace{0.5 cm}
+%% \textcolor{darkorange}{\bf Haskell:}
+
+%% \begin{center}
+%% \begin{minipage}{0.85\linewidth}
+%% \normalsize
+%% \begin{minted}{haskell}
+%% pz :: (Particle particle) => particle -> Float
+%% pz (Neutral pt eta _)   = pt * sinh(eta)
+%% pz (Charged pt eta _ q) = pt * sinh(eta)
+%% \end{minted}
+%% \end{minipage}
+%% \end{center}
+%% \end{frame}
+
+%% \begin{frame}{Pattern matching}
+%% \LARGE
+%% \vspace{0.5 cm}
+%% \begin{center}
+%% Could we use pattern matching to associate \\ particle candidates to a given decay chain?
+%% \end{center}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Something like this?}
+%% \begin{Verbatim}[commandchars=\\\{\}]
+%% Higgs \{
+%%     Z1 \{
+%%         lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
+%%         \textcolor{blue}{requiring} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
+%%     \}
+%%     Z2 \{
+%%         lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
+%%         \textcolor{blue}{requiring} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
+%%     \}
+%%     \textcolor{blue}{minimizing} (Z1.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2 + (Z2.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2
+%% \}
+%% \end{Verbatim}
+
+%% \large
+%% \vspace{0.5 cm}
+%% where the match ensures that leptons aren't double-counted in both Z's?
+%% \end{frame}
+
+%% \begin{frame}[fragile]{Or, what about this?}
+%% \Large
+%% \vspace{0.5 cm}
+%% Behold Racket (Scheme)'s two-dimensional syntax!
+
+%% \normalsize
+
+%% \vspace{0.25 cm}
+%% \begin{center}
+%% \begin{minipage}{0.8\linewidth}
+%% \begin{minted}{scheme}
+%% (define (subtype? a b)
+%%   #2dmatch
+%%   +----------+----------+-------+----------+
+%%   |   a  b   | 'Integer | 'Real | 'Complex |
+%%   +----------+----------+-------+----------+
+%%   | 'Integer |             #t              |
+%%   +----------+----------+                  |
+%%   | 'Real    |          |                  |
+%%   +----------+          +-------+          |
+%%   | 'Complex |        #f        |          |
+%%   +----------+------------------+----------+)
+%% \end{minted}
+%% \end{minipage}
+%% \end{center}
+
+%% \vspace{0.25 cm}
+%% \small \hfill see \textcolor{blue}{\href{https://docs.racket-lang.org/2d/index.html}{Racket documentation}}
+%% \end{frame}
+
+%% \begin{frame}[fragile]{So maybe something like this?}
+%% \begin{Verbatim}[commandchars=\\\{\}]
+%% Higgs : \textcolor{blue}{fit} (Z1.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2 + (Z2.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2
+%%    |
+%%    +--> Z1 : \textcolor{blue}{cut} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
+%%    |     |
+%%    |     +--> lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
+%%    |
+%%    +--> Z2 : \textcolor{blue}{cut} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
+%%          |
+%%          +--> lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
+%% \end{Verbatim}
+
+%% \large
+%% \vspace{0.5 cm}
+%% Maybe the arrows are unnecessary; maybe an indentation rule like Python's\ldots
+%% \end{frame}
+
+\begin{frame}[fragile]{I tried out some ideas with a simple parser and interpreter}
 \Large
 \vspace{0.5 cm}
-
-\underline{Pattern matching}: like regular expressions for data structures.
+\textcolor{blue}{\small \url{https://github.com/diana-hep/rejig/blob/master/pattern-match/define-and-run.py}}
 
 \vspace{0.5 cm}
-\textcolor{darkorange}{\bf Scala:}
+\only<1>{\textcolor{darkblue}{Syntax:}}\only<2>{\textcolor{darkblue}{Example:}}
 
 \begin{center}
 \begin{minipage}{0.85\linewidth}
 \normalsize
-\begin{minted}{scala}
-def pz(particle: Particle) = match particle {
-    case Neutral(pt, eta, _)    => pt * sinh(eta)
-    case Charged(pt, eta, _, q) => pt * sinh(eta)
-}
-\end{minted}
-\end{minipage}
-\end{center}
-
-\vspace{0.5 cm}
-\textcolor{darkorange}{\bf Haskell:}
-
-\begin{center}
-\begin{minipage}{0.85\linewidth}
-\normalsize
-\begin{minted}{haskell}
-pz :: (Particle particle) => particle -> Float
-pz (Neutral pt eta _)   = pt * sinh(eta)
-pz (Charged pt eta _ q) = pt * sinh(eta)
-\end{minted}
-\end{minipage}
-\end{center}
-\end{frame}
-
-\begin{frame}{Pattern matching}
-\LARGE
-\vspace{0.5 cm}
-\begin{center}
-Could we use pattern matching to associate \\ particle candidates to a given decay chain?
-\end{center}
-\end{frame}
-
-\begin{frame}[fragile]{Something like this?}
+\begin{onlyenv}<1>
 \begin{Verbatim}[commandchars=\\\{\}]
-Higgs \{
-    Z1 \{
-        lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
-        \textcolor{blue}{requiring} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
-    \}
-    Z2 \{
-        lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
-        \textcolor{blue}{requiring} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
-    \}
-    \textcolor{blue}{minimizing} (Z1.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2 + (Z2.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2
+\textcolor{darkgreen}{pattern:}    derivation* constraint* \textcolor{darkorange}{"for"} multiple
+\textcolor{darkgreen}{derivation:} CNAME \textcolor{darkorange}{"="} expression
+\textcolor{darkgreen}{constraint:} \textcolor{darkorange}{"if"} expression -> if
+          | \textcolor{darkorange}{"best"} expression -> best
+          | \textcolor{darkorange}{"sort"} expression -> sort
+\textcolor{darkgreen}{multiple:}   single (\textcolor{darkorange}{","} single)*
+\textcolor{darkgreen}{single:}     CNAME (\textcolor{darkorange}{","} CNAME)* \textcolor{darkorange}{"in"} expression
+\end{Verbatim}
+\vspace{\baselineskip}
+\end{onlyenv}
+\begin{onlyenv}<2>
+\vspace{-0.5\baselineskip}
+\begin{Verbatim}[commandchars=\\\{\}]
+higgs2e2mu = \textcolor{blue}{match} \{
+    z1 = lep1 + lep2
+    z2 = lep3 + lep4
+    hmass = \textcolor{mauve}{mass}(z1 + z2)
+    \textcolor{blue}{if} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
+    \textcolor{blue}{if} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
+    \textcolor{blue}{for} lep1, lep2 \textcolor{blue}{in} electrons, lep3, lep4 \textcolor{blue}{in} muons
 \}
 \end{Verbatim}
-
-\large
-\vspace{0.5 cm}
-where the match ensures that leptons aren't double-counted in both Z's?
+\end{onlyenv}
+\end{minipage}
+\end{center}
 \end{frame}
 
-\begin{frame}[fragile]{Or, what about this?}
-\Large
-\vspace{0.5 cm}
-Behold Racket (Scheme)'s two-dimensional syntax!
-
-\normalsize
-
+\begin{frame}[fragile]{Complete example: same flavor, opposite flavor}
+\scriptsize
 \vspace{0.25 cm}
-\begin{minted}{scheme}
-(define (subtype? a b)
-  #2dmatch
-  +----------+----------+-------+----------+
-  |   a  b   | 'Integer | 'Real | 'Complex |
-  +----------+----------+-------+----------+
-  | 'Integer |             #t              |
-  +----------+----------+                  |
-  | 'Real    |          |                  |
-  +----------+          +-------+          |
-  | 'Complex |        #f        |          |
-  +----------+------------------+----------+)
-\end{minted}
-\end{frame}
-
-\begin{frame}[fragile]{So maybe something like this?}
 \begin{Verbatim}[commandchars=\\\{\}]
-Higgs : \textcolor{blue}{fit} (Z1.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2 + (Z2.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2
-   |
-   +--> Z1 : \textcolor{blue}{cut} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
-   |     |
-   |     +--> lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
-   |
-   +--> Z2 : \textcolor{blue}{cut} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
-         |
-         +--> lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
+\textcolor{mauve}{mass}(particle) = \textcolor{mauve}{sqrt}(particle.\textcolor{mauve}{E}**\textcolor{darkorange}{2} - particle.\textcolor{mauve}{px}**\textcolor{darkorange}{2} - particle.\textcolor{mauve}{py}**\textcolor{darkorange}{2} - particle.\textcolor{mauve}{pz}**\textcolor{darkorange}{2})
+
+\textcolor{mauve}{same_flavor}(collection) = \textcolor{blue}{match} \{
+    z1 = lep1 + lep2
+    z2 = lep3 + lep4
+    hmass = \textcolor{mauve}{mass}(z1 + z2)
+    \textcolor{blue}{if} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
+    \textcolor{blue}{if} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
+    \textcolor{blue}{sort} (\textcolor{mauve}{mass}(z1) - \textcolor{darkorange}{91})**\textcolor{darkorange}{2} + (\textcolor{mauve}{mass}(z2) - \textcolor{darkorange}{91})**\textcolor{darkorange}{2}
+    \textcolor{blue}{for} lep1, lep2, lep3, lep4 \textcolor{blue}{in} collection
+\}
+higgs4e = \textcolor{mauve}{same_flavor}(electrons)
+higgs4mu = \textcolor{mauve}{same_flavor}(muons)
+
+higgs2e2mu = \textcolor{blue}{match} \{
+    z1 = lep1 + lep2
+    z2 = lep3 + lep4
+    hmass = \textcolor{mauve}{mass}(z1 + z2)
+    \textcolor{blue}{if} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
+    \textcolor{blue}{if} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
+    \textcolor{blue}{for} lep1, lep2 \textcolor{blue}{in} electrons, lep3, lep4 \textcolor{blue}{in} muons
+\}
 \end{Verbatim}
-
-\large
-\vspace{0.5 cm}
-Maybe the arrows are unnecessary; maybe an indentation rule like Python's\ldots
 \end{frame}
-
-
 
 
 \end{document}
