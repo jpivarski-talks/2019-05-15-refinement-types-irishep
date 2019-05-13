@@ -173,7 +173,7 @@ Check line:col 1:5 (pos 5):
 Including value sets in the type definitions lets us identify runtime conditions in the type-check.
 
 \vspace{0.25 cm}
-The hard parts are recursion (structural recursion) and infinite datasets (codata), both of which we can safely exclude from physics event processing.
+The hard parts are recursion (structural recursion) and infinite datasets (codata), both of which can be safely excluded from physics event processing.
 \end{frame}
 
 \begin{frame}[fragile]{Even without {\it total} functions, it can be useful for array lengths}
@@ -205,7 +205,7 @@ Muons_pt[(nMuons > 0), 0] > 30          # mask first dim, pick 0
 \uncover<3->{\textcolor{darkblue}{This error would be safer and more informative as a type error.}}
 \end{frame}
 
-\begin{frame}{Minimal application of refinement types}
+\begin{frame}{Minimal application of refinement types for particle collections}
 \Large
 \vspace{0.25 cm}
 \begin{center}
@@ -319,6 +319,12 @@ Behold Racket (Scheme)'s two-dimensional syntax!
 \end{frame}
 
 \begin{frame}[fragile]{So maybe something like this?}
+\Large
+\vspace{0.25 cm}
+The ASCII art of the decay is literally the code used to match it.
+
+\normalsize
+\vspace{0.5 cm}
 \begin{Verbatim}[commandchars=\\\{\}]
 Higgs : \textcolor{blue}{fit} (Z1.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2 + (Z2.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2
    |
@@ -419,9 +425,9 @@ How about matching generator-level and reconstructed particles?
 \normalsize
 \vspace{0.25 cm}
 \begin{Verbatim}[commandchars=\\\{\}]
-genreco = match \{
-    if delta_R(gen, reco) < 0.5
-    for gen in generator, reco in reconstructed
+genreco = \textcolor{blue}{match} \{
+    \textcolor{blue}{if} \textcolor{mauve}{delta_R}(gen, reco) < \textcolor{darkorange}{0.5}
+    \textcolor{blue}{for} gen \textcolor{blue}{in} generator, reco \textcolor{blue}{in} reconstructed
 \}
 \end{Verbatim}
 
@@ -438,7 +444,7 @@ Should grouping be part of the {\tt match} syntax or separate?
 \begin{frame}{(Self) Criticisms}
 \Large
 \vspace{0.5 cm}
-\begin{itemize}\setlength{\itemsep}{0.25 cm}
+\begin{itemize}\setlength{\itemsep}{0.5 cm}
 \item This is not so much a pattern-matching syntax as a declarative looping construct.
 \item It's starting to look wordy, like SQL (or COBOL).
 \item Like SQL and COBOL, it's using special syntax where a chain of functionals would work as well.
