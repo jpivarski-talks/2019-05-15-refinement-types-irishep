@@ -383,37 +383,63 @@ higgs2e2mu = \textcolor{blue}{match} \{
 \textcolor{mauve}{mass}(particle) = \textcolor{mauve}{sqrt}(particle.\textcolor{mauve}{E}**\textcolor{darkorange}{2} - particle.\textcolor{mauve}{px}**\textcolor{darkorange}{2} - particle.\textcolor{mauve}{py}**\textcolor{darkorange}{2} - particle.\textcolor{mauve}{pz}**\textcolor{darkorange}{2})
 
 \textcolor{mauve}{same_flavor}(collection) = \textcolor{blue}{match} \{
-    z1 = lep1 + lep2
-    z2 = lep3 + lep4
+    z1 = lep1 + lep2; z2 = lep3 + lep4
     hmass = \textcolor{mauve}{mass}(z1 + z2)
     \textcolor{blue}{if} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
     \textcolor{blue}{if} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
     \textcolor{blue}{sort} (\textcolor{mauve}{mass}(z1) - \textcolor{darkorange}{91})**\textcolor{darkorange}{2} + (\textcolor{mauve}{mass}(z2) - \textcolor{darkorange}{91})**\textcolor{darkorange}{2}
     \textcolor{blue}{for} lep1, lep2, lep3, lep4 \textcolor{blue}{in} collection
-\}
-higgs4e = \textcolor{mauve}{same_flavor}(electrons)
+\}[:\textcolor{darkorange}{1}]   \textcolor{gray}{# at most one}
+
+higgs4e  = \textcolor{mauve}{same_flavor}(electrons)
 higgs4mu = \textcolor{mauve}{same_flavor}(muons)
 
 higgs2e2mu = \textcolor{blue}{match} \{
-    z1 = lep1 + lep2
-    z2 = lep3 + lep4
+    z1 = lep1 + lep2; z2 = lep3 + lep4
     hmass = \textcolor{mauve}{mass}(z1 + z2)
     \textcolor{blue}{if} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
     \textcolor{blue}{if} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
+    \textcolor{blue}{sort} (\textcolor{mauve}{mass}(z1) - \textcolor{darkorange}{91})**\textcolor{darkorange}{2} + (\textcolor{mauve}{mass}(z2) - \textcolor{darkorange}{91})**\textcolor{darkorange}{2}
     \textcolor{blue}{for} lep1, lep2 \textcolor{blue}{in} electrons, lep3, lep4 \textcolor{blue}{in} muons
+\}[:\textcolor{darkorange}{1}]   \textcolor{gray}{# at most one}
+\end{Verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{A good language construct can be used for other purposes}
+\Large
+\vspace{0.25 cm}
+
+How about matching generator-level and reconstructed particles?
+
+\vspace{0.25 cm}
+{\normalsize (Or matching jets from different algorithms, or computing isolation variables, etc.)}
+
+\normalsize
+\vspace{0.25 cm}
+\begin{Verbatim}[commandchars=\\\{\}]
+genreco = match \{
+    if delta_R(gen, reco) < 0.5
+    for gen in generator, reco in reconstructed
 \}
 \end{Verbatim}
+
+\Large
+\vspace{0.25 cm}
+\begin{uncoverenv}<2->
+It's a start, but now we need to group by either {\tt gen} or {\tt reco} and find the best (minimum {\tt delta\_R}) in each group.
+
+\vspace{0.5 cm}
+Should grouping be part of the {\tt match} syntax or separate?
+\end{uncoverenv}
 \end{frame}
 
 \begin{frame}{(Self) Criticisms}
 \Large
 \vspace{0.5 cm}
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0.25 cm}
 \item This is not so much a pattern-matching syntax as a declarative looping construct.
-\item It's starting to look like SQL.
-\item 
-
-
+\item It's starting to look wordy, like SQL (or COBOL).
+\item Like SQL and COBOL, it's using special syntax where a chain of functionals would work as well.
 \end{itemize}
 \end{frame}
 
